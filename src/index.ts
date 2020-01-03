@@ -1,20 +1,20 @@
 // three.js
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import { Move } from './Game';
-import { GameRenderer } from './GameRenderer';
+import { Move } from "./Game";
+import { GameRenderer } from "./GameRenderer";
 
-let mouse = new THREE.Vector2();
+let mouse: THREE.Vector2 = new THREE.Vector2();
 
-let raycaster = new THREE.Raycaster();
+let raycaster: THREE.Raycaster = new THREE.Raycaster();
 
 // create the scene
-let scene = new THREE.Scene();
+let scene: THREE.Scene = new THREE.Scene();
 
 // create the camera
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-let renderer = new THREE.WebGLRenderer({
+let renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({
 	antialias: true,
 });
 renderer.shadowMap.enabled = true;
@@ -28,11 +28,11 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // add lights
-let hemisphereLight = new THREE.HemisphereLight(0xfff3cc, 0xff33e4, 1);
+let hemisphereLight: THREE.HemisphereLight = new THREE.HemisphereLight(0xfff3cc, 0xff33e4, 1);
 
 scene.add(hemisphereLight);
 
-let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+let directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(5, 10, -7.5);
 // directionalLight.position.set(1,1,1);
 directionalLight.castShadow = true;
@@ -45,20 +45,20 @@ directionalLight.shadow.camera.far = 500;     // default
 scene.add(directionalLight);
 
 // add ground
-let groundPlaneGeometry = new THREE.PlaneBufferGeometry(100, 100);
-let groundPlaneMaterial = new THREE.MeshStandardMaterial({
+let groundPlaneGeometry: THREE.PlaneBufferGeometry = new THREE.PlaneBufferGeometry(100, 100);
+let groundPlaneMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({
 	color: 0x161616,
 	roughness: 1,
 	metalness: 0.64
 });
 
-let groundPlane = new THREE.Mesh(groundPlaneGeometry, groundPlaneMaterial);
+let groundPlane: THREE.Mesh = new THREE.Mesh(groundPlaneGeometry, groundPlaneMaterial);
 groundPlane.rotateX(-Math.PI / 2);
 groundPlane.receiveShadow = true;
 
 scene.add(groundPlane);
 
-let game = new GameRenderer(7);
+let game: GameRenderer = new GameRenderer(7);
 scene.add(game);
 
 camera.position.x = 0;
@@ -67,32 +67,32 @@ camera.position.z = 2;
 
 camera.lookAt(scene.position);
 
-function onWindowResize() {
+function onWindowResize(): void {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-window.addEventListener( 'resize', onWindowResize, false );
+window.addEventListener( "resize", onWindowResize, false );
 
 function hasMove(object: THREE.Object3D): Boolean {
-	return object.userData.hasOwnProperty('move') && object.userData['move'] instanceof Move;
+	return object.userData.hasOwnProperty("move") && object.userData.move instanceof Move;
 }
 
-function onMouseDown(event: MouseEvent) {
+function onMouseDown(event: MouseEvent): void {
 	event.preventDefault();
 
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );
-	var intersects = raycaster.intersectObjects( scene.children, true );
+	var intersects: THREE.Intersection[] = raycaster.intersectObjects( scene.children, true );
 
 	if (intersects.length > 0) {
-		const intersection = intersects.find(e => hasMove(e.object));
-		if (intersection == null) return;
+		const intersection: THREE.Intersection = intersects.find(e => hasMove(e.object));
+		if (intersection == null) { return; }
 
-		let move: Move = intersection.object.userData['move'];
+		let move: Move = intersection.object.userData.move;
 
 		console.log(move);
 
@@ -101,16 +101,15 @@ function onMouseDown(event: MouseEvent) {
 	}
 }
 
-window.addEventListener( 'mousedown', onMouseDown, false );
+window.addEventListener( "mousedown", onMouseDown, false );
 
 function animate(): void {
-	requestAnimationFrame(animate)
-	render()
+	requestAnimationFrame(animate);
+	render();
 }
 
 function render(): void {
-	let timer = 0.002 * Date.now()
-	renderer.render(scene, camera)
+	renderer.render(scene, camera);
 }
 
-animate()
+animate();
