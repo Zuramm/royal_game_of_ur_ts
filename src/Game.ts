@@ -1,3 +1,5 @@
+export type Field = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
+
 export enum TeamColor {
     White = 0,
     Black = 1
@@ -6,13 +8,13 @@ export enum TeamColor {
 export class Team {
     public piecesLeft: number;
     public piecesSafe: number = 0;
-    public pieces: number[] = [];
+    public pieces: Field[] = [];
 
     constructor(startPieces: number) {
         this.piecesLeft = startPieces;
     }
 
-    public addPiece(piece: number): void {
+    public addPiece(piece: Field): void {
         this.pieces.push(piece);
     }
 
@@ -20,40 +22,40 @@ export class Team {
         this.pieces.splice(n, 1);
     }
 
-    public isPieceOnSpace(space: number): boolean {
-        return this.pieces.indexOf(space) >= 0;
+    public isPieceOnField(field: Field): boolean {
+        return this.pieces.indexOf(field) >= 0;
     }
 
-    public getPieceOnSpace(space: number): number {
-        return this.pieces.indexOf(space);
+    public getPieceOnField(field: Field): number {
+        return this.pieces.indexOf(field);
     }
 }
 
 export abstract class Move {
-    constructor(public distance: number) {}
+    constructor(public field: Field, public distance: number) {}
 }
 
 export class NewMove extends Move {
     constructor(distance: number) {
-        super(distance);
+        super(-1, distance);
     }
 }
 
 export class MoveMove extends Move {
-    constructor(distance: number, public piece: number) {
-        super(distance);
+    constructor(public field: Field, distance: number, public piece: number) {
+        super(field, distance);
     }
 }
 
 export class KillMove extends Move {
-    constructor(distance: number, public piece: number, public dyingPiece: number) {
-        super(distance);
+    constructor(public field: Field, distance: number, public piece: number, public dyingPiece: number) {
+        super(field, distance);
     }
 }
 
 export class SaveMove extends Move {
-    constructor(distance: number, public piece: number) {
-        super(distance);
+    constructor(public field: Field, distance: number, public piece: number) {
+        super(field, distance);
     }
 }
 
@@ -63,12 +65,12 @@ export class Game {
     public static COMBAT: number = 12;
     public static SAFE_END: number = 14;
 
-    private static isInCombatZone(space: number): boolean {
-        return space >= this.SAFE_START && space < this.COMBAT;
+    private static isInCombatZone(field: Field): boolean {
+        return field >= this.SAFE_START && field < this.COMBAT;
     }
 
-    private static isSpaceStar(space: number): boolean {
-        return space === 3 || space === 7 || space === 13;
+    private static isFieldStar(field: Field): boolean {
+        return field === 3 || field === 7 || field === 13;
     }
 
     public currentColor: TeamColor = TeamColor.White;
@@ -112,8 +114,8 @@ export class Game {
         }
     }
 
-    private isFieldOccupied(space: number): boolean {
-        return this.teams.some(team => team.isPieceOnSpace(space));
+    private isFieldOccupied(field: Field): boolean {
+        return this.teams.some(team => team.isPieceOnField(field));
     }
 
     public getPossibleMoves(roll: number): Move[] {
@@ -128,7 +130,7 @@ export class Game {
 
         // can you move one piece out?
         const left: number = team.piecesLeft;
-        if (left > 0 && !team.isPieceOnSpace(roll - 1)) {
+        if (left > 0 && !team.isPieceOnField((roll - 1) as Field)) {
             moves.push(new NewMove(roll));
         }
 
@@ -136,19 +138,20 @@ export class Game {
             const newSpace: number = team.pieces[pieceId] + roll;
 
             if (newSpace === 14) {
-                moves.push(new SaveMove(roll, pieceId));
-            }
-
-            if (newSpace >= 13 || newSpace === 7 && this.oppositeTeam.isPieceOnSpace(7)) {
+                moves.push(new SaveMove(team.pieces[pieceId], roll, pieceId));
                 continue;
             }
 
-            if (!team.isPieceOnSpace(newSpace)) {
-                const enemy: number = otherTeam.getPieceOnSpace(newSpace);
-                if (Game.isInCombatZone(newSpace) && enemy >= 0) {
-                    moves.push(new KillMove(roll, pieceId, enemy));
+            if (newSpace > 14 || newSpace === 7 && this.oppositeTeam.isPieceOnField(7)) {
+                continue;
+            }
+
+            if (!team.isPieceOnField(newSpace as Field)) {
+                const enemy: number = otherTeam.getPieceOnField(newSpace as Field);
+                if (Game.isInCombatZone(newSpace as Field) && enemy >= 0) {
+                    moves.push(new KillMove(team.pieces[pieceId], roll, pieceId, enemy));
                 } else {
-                    moves.push(new MoveMove(roll, pieceId));
+                    moves.push(new MoveMove(team.pieces[pieceId], roll, pieceId));
                 }
             }
         }
@@ -166,9 +169,9 @@ export class Game {
         const otherTeam: Team = this.oppositeTeam;
 
         if (move instanceof NewMove) {
-            team.addPiece(move.distance - 1);
+            team.addPiece(move.distance - 1 as Field);
 
-            if (!Game.isSpaceStar(move.distance - 1)) {
+            if (!Game.isFieldStar(move.distance - 1 as Field)) {
                 this.toggleTeam();
             }
 
@@ -183,7 +186,7 @@ export class Game {
                 this.toggleTeam();
             } else if (move instanceof MoveMove) {
                 team.pieces[move.piece] += move.distance;
-                if (!Game.isSpaceStar(team.pieces[move.piece])) {
+                if (!Game.isFieldStar(team.pieces[move.piece] as Field)) {
                     this.toggleTeam();
                 }
             }
