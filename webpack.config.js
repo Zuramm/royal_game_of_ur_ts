@@ -36,7 +36,7 @@ const ProgressBarPluginConfig = new ProgressBarPlugin();
 /* Configure Copy */
 const CopyPlugin = require("copy-webpack-plugin");
 const CopyPluginConfig = new CopyPlugin({
-    patterns: [{ from: "src/models/*", to: "dist/" }],
+    patterns: [{ from: "models/*", to: "models/[name][ext]" }],
 });
 
 /* Export configuration */
