@@ -1,5 +1,8 @@
 import * as THREE from "three";
-import { SVGLoader, StrokeStyle } from "three/examples/jsm/loaders/SVGLoader.js";
+import {
+    SVGLoader,
+    StrokeStyle,
+} from "three/examples/jsm/loaders/SVGLoader.js";
 import { Field, TeamColor } from "./Game";
 import { Vector3 } from "three";
 
@@ -17,7 +20,11 @@ function getX(field: Field): number {
     return field < 4 ? 3 - field : field < 12 ? field - 4 : 7 - (field - 12);
 }
 
-export function generateMovePath(from: Field, to: Field, team: TeamColor): THREE.Object3D {
+export function generateMovePath(
+    from: Field,
+    to: Field,
+    team: TeamColor
+): THREE.Object3D {
     const fromSection: Section = getSection(from);
     const toSection: Section = getSection(to);
 
@@ -30,7 +37,7 @@ export function generateMovePath(from: Field, to: Field, team: TeamColor): THREE
 
     if (fromSection === 0 && toSection > 0) {
         if (from < 3) {
-            path.absarc(0.5, 0.5, 0.5, Math.PI * 3 / 2, Math.PI, true);
+            path.absarc(0.5, 0.5, 0.5, (Math.PI * 3) / 2, Math.PI, true);
         }
         if (to > 4) {
             path.absarc(0.5, 0.5, 0.5, Math.PI, Math.PI / 2, true);
@@ -42,7 +49,7 @@ export function generateMovePath(from: Field, to: Field, team: TeamColor): THREE
             path.absarc(6.5, 0.5, 0.5, Math.PI / 2, 0, true);
         }
         if (to > 12) {
-            path.absarc(6.5, 0.5, 0.5, 0, Math.PI * 3 / 2, true);
+            path.absarc(6.5, 0.5, 0.5, 0, (Math.PI * 3) / 2, true);
         }
     }
 
@@ -54,33 +61,56 @@ export function generateMovePath(from: Field, to: Field, team: TeamColor): THREE
     const arrowSize: number = 0.2;
 
     if (to === 4 || to === 12) {
-    	arrowPath.moveTo(getX(to) - arrowSize, getY(to) - dir * arrowSize);
-    	arrowPath.lineTo(getX(to), getY(to));
-    	arrowPath.lineTo(getX(to) + arrowSize, getY(to) - dir * arrowSize);
+        arrowPath.moveTo(getX(to) - arrowSize, getY(to) - dir * arrowSize);
+        arrowPath.lineTo(getX(to), getY(to));
+        arrowPath.lineTo(getX(to) + arrowSize, getY(to) - dir * arrowSize);
     } else {
-    	arrowPath.moveTo(getX(to) - dir * arrowSize, getY(to) - arrowSize);
-    	arrowPath.lineTo(getX(to), getY(to));
-    	arrowPath.lineTo(getX(to) - dir * arrowSize, getY(to) + arrowSize);
+        arrowPath.moveTo(getX(to) - dir * arrowSize, getY(to) - arrowSize);
+        arrowPath.lineTo(getX(to), getY(to));
+        arrowPath.lineTo(getX(to) - dir * arrowSize, getY(to) + arrowSize);
     }
 
     // render
-    const points: THREE.Vector3[] = path.getPoints().map(v => new Vector3(v.x, team === TeamColor.Black ? v.y : 2 - v.y, 0));
+    const points: THREE.Vector2[] = path
+        .getPoints()
+        .map(
+            (v) =>
+                new THREE.Vector2(v.x, team === TeamColor.Black ? v.y : 2 - v.y)
+        );
     const style: StrokeStyle = SVGLoader.getStrokeStyle(0.1, "#000000");
     console.log(points);
 
-    const strokeGeometry: THREE.BufferGeometry = SVGLoader.pointsToStroke(points, style, 12, 0.0001);
+    const strokeGeometry: THREE.BufferGeometry = SVGLoader.pointsToStroke(
+        points,
+        style,
+        12,
+        0.0001
+    );
     const material: THREE.Material = new THREE.LineBasicMaterial({
-        color: 0xffffff
+        color: 0xffffff,
     });
 
-    const arrowPoints: THREE.Vector3[] = arrowPath.getPoints().map(v => new Vector3(v.x, team === TeamColor.Black ? v.y : 2 - v.y, 0));
+    const arrowPoints: THREE.Vector2[] = arrowPath
+        .getPoints()
+        .map(
+            (v) =>
+                new THREE.Vector2(v.x, team === TeamColor.Black ? v.y : 2 - v.y)
+        );
     const arrowStyle: StrokeStyle = SVGLoader.getStrokeStyle(0.1, "#000000");
     console.log(points);
 
-    const arrowStrokeGeometry: THREE.BufferGeometry = SVGLoader.pointsToStroke(arrowPoints, arrowStyle, 12, 0.0001);
+    const arrowStrokeGeometry: THREE.BufferGeometry = SVGLoader.pointsToStroke(
+        arrowPoints,
+        arrowStyle,
+        12,
+        0.0001
+    );
 
     const pathMesh: THREE.Mesh = new THREE.Mesh(strokeGeometry, material);
-    const arrowPathMesh: THREE.Mesh = new THREE.Mesh(arrowStrokeGeometry, material);
+    const arrowPathMesh: THREE.Mesh = new THREE.Mesh(
+        arrowStrokeGeometry,
+        material
+    );
 
     const pathGroup: THREE.Group = new THREE.Group();
     pathGroup.add(pathMesh);
