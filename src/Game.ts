@@ -1,8 +1,24 @@
-export type Field = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
+export type Field =
+    | -1
+    | 0
+    | 1
+    | 2
+    | 3
+    | 4
+    | 5
+    | 6
+    | 7
+    | 8
+    | 9
+    | 10
+    | 11
+    | 12
+    | 13
+    | 14;
 
 export enum TeamColor {
     White = 0,
-    Black = 1
+    Black = 1,
 }
 
 export class Team {
@@ -15,11 +31,18 @@ export class Team {
     }
 
     public addPiece(piece: Field): void {
+        this.piecesLeft--;
         this.pieces.push(piece);
     }
 
     public killPiece(n: number): void {
+        this.piecesLeft++;
         this.pieces.splice(n, 1);
+    }
+
+    public safePiece(n: number): void {
+        this.piecesSafe++;
+        this.pieces.splice(n, 1); // remove piece from board
     }
 
     public isPieceOnField(field: Field): boolean {
@@ -48,7 +71,12 @@ export class MoveMove extends Move {
 }
 
 export class KillMove extends Move {
-    constructor(public field: Field, distance: number, public piece: number, public dyingPiece: number) {
+    constructor(
+        public field: Field,
+        distance: number,
+        public piece: number,
+        public dyingPiece: number
+    ) {
         super(field, distance);
     }
 }
@@ -92,15 +120,15 @@ export class Game {
         this.teams[this.currentColor === 1 ? 0 : 1] = value;
     }
 
-    constructor(private startPieces: number) {
-        this.teams = [
-            new Team(startPieces),
-            new Team(startPieces)
-        ];
+    public get isOver(): boolean {
+        return (
+            this.teams[0].piecesSafe === this.startPieces ||
+            this.teams[1].piecesSafe === this.startPieces
+        );
     }
 
-    public isGameOver(): boolean {
-        return this.teams[0].piecesSafe === this.startPieces || this.teams[1].piecesSafe === this.startPieces;
+    constructor(private startPieces: number) {
+        this.teams = [new Team(startPieces), new Team(startPieces)];
     }
 
     private toggleTeam(): void {
@@ -115,13 +143,13 @@ export class Game {
     }
 
     private isFieldOccupied(field: Field): boolean {
-        return this.teams.some(team => team.isPieceOnField(field));
+        return this.teams.some((team) => team.isPieceOnField(field));
     }
 
     public getPossibleMoves(roll: number): Move[] {
         const moves: Move[] = [];
 
-        if (roll === 0) {
+        if (roll === 0 || this.isOver) {
             return moves;
         }
 
@@ -130,6 +158,7 @@ export class Game {
 
         // can you move one piece out?
         const left: number = team.piecesLeft;
+        console.log(`left: ${left}`);
         if (left > 0 && !team.isPieceOnField((roll - 1) as Field)) {
             moves.push(new NewMove(roll));
         }
@@ -142,16 +171,25 @@ export class Game {
                 continue;
             }
 
-            if (newSpace > 14 || newSpace === 7 && this.oppositeTeam.isPieceOnField(7)) {
+            if (
+                newSpace > 14 ||
+                (newSpace === 7 && this.oppositeTeam.isPieceOnField(7))
+            ) {
                 continue;
             }
 
             if (!team.isPieceOnField(newSpace as Field)) {
-                const enemy: number = otherTeam.getPieceOnField(newSpace as Field);
+                const enemy: number = otherTeam.getPieceOnField(
+                    newSpace as Field
+                );
                 if (Game.isInCombatZone(newSpace as Field) && enemy >= 0) {
-                    moves.push(new KillMove(team.pieces[pieceId], roll, pieceId, enemy));
+                    moves.push(
+                        new KillMove(team.pieces[pieceId], roll, pieceId, enemy)
+                    );
                 } else {
-                    moves.push(new MoveMove(team.pieces[pieceId], roll, pieceId));
+                    moves.push(
+                        new MoveMove(team.pieces[pieceId], roll, pieceId)
+                    );
                 }
             }
         }
@@ -169,16 +207,14 @@ export class Game {
         const otherTeam: Team = this.oppositeTeam;
 
         if (move instanceof NewMove) {
-            team.addPiece(move.distance - 1 as Field);
+            team.addPiece((move.distance - 1) as Field);
 
-            if (!Game.isFieldStar(move.distance - 1 as Field)) {
+            if (!Game.isFieldStar((move.distance - 1) as Field)) {
                 this.toggleTeam();
             }
-
         } else {
             if (move instanceof SaveMove) {
-                team.killPiece(move.piece);
-                team.piecesSafe++;
+                team.safePiece(move.piece);
                 this.toggleTeam();
             } else if (move instanceof KillMove) {
                 team.pieces[move.piece] += move.distance;
