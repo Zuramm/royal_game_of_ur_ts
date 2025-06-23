@@ -1,47 +1,47 @@
 {
-  "name": "three-typescript-starter",
-  "version": "1.0.0",
-  "description": "three.js + typescript",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server",
-    "build": "webpack"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pinqy520/three-typescript-starter.git"
-  },
-  "keywords": [],
-  "author": "Huang Qi",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pinqy520/three-typescript-starter/issues"
-  },
-  "homepage": "https://github.com/pinqy520/three-typescript-starter#readme",
-  "devDependencies": {
-    "awesome-typescript-loader": "latest",
-    "browser-sync": "latest",
-    "browser-sync-webpack-plugin": "latest",
-    "clean-webpack-plugin": "^3.0.0",
-    "copy-webpack-plugin": "^5.1.1",
-    "css-loader": "latest",
-    "extract-text-webpack-plugin": "latest",
-    "file-loader": "latest",
-    "html-webpack-plugin": "latest",
-    "json-loader": "latest",
-    "progress-bar-webpack-plugin": "latest",
-    "source-map-loader": "^0.2.4",
-    "style-loader": "latest",
-    "tslint": "^5.20.1",
-    "tslint-loader": "^3.5.4",
-    "typescript": "latest",
-    "webpack": "latest",
-    "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "latest"
-  },
-  "dependencies": {
-    "@types/three": "latest",
-    "three": "latest"
-  }
+    "name": "three-typescript-starter",
+    "version": "1.0.0",
+    "description": "three.js + typescript",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server",
+        "build": "webpack"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pinqy520/three-typescript-starter.git"
+    },
+    "keywords": [],
+    "author": "Huang Qi",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/pinqy520/three-typescript-starter/issues"
+    },
+    "homepage": "https://github.com/pinqy520/three-typescript-starter#readme",
+    "devDependencies": {
+        "awesome-typescript-loader": "latest",
+        "browser-sync": "latest",
+        "browser-sync-webpack-plugin": "latest",
+        "clean-webpack-plugin": "^3.0.0",
+        "copy-webpack-plugin": "^5.1.1",
+        "css-loader": "latest",
+        "extract-text-webpack-plugin": "latest",
+        "file-loader": "latest",
+        "html-webpack-plugin": "latest",
+        "json-loader": "latest",
+        "progress-bar-webpack-plugin": "latest",
+        "source-map-loader": "^0.2.4",
+        "style-loader": "latest",
+        "tslint": "^5.20.1",
+        "tslint-loader": "^3.5.4",
+        "typescript": "latest",
+        "webpack": "latest",
+        "webpack-cli": "^3.0.8",
+        "webpack-dev-server": "latest"
+    },
+    "dependencies": {
+        "@types/three": "latest",
+        "three": "latest"
+    }
 }
