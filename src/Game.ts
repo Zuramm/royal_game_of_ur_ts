@@ -142,10 +142,6 @@ export class Game {
         }
     }
 
-    private isFieldOccupied(field: Field): boolean {
-        return this.teams.some((team) => team.isPieceOnField(field));
-    }
-
     public getPossibleMoves(roll: number): Move[] {
         const moves: Move[] = [];
 

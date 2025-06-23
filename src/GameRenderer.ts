@@ -185,6 +185,10 @@ export class GameRenderer extends THREE.Object3D {
     }
 
     generateOptions(): void {
+        if (this.game.isOver) {
+            return;
+        }
+
         const dice: number = rollDice();
         console.log(
             `Player ${
