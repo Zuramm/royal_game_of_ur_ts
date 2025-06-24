@@ -2,6 +2,10 @@
 
 A 3D implementation of The Royal Game of Ur using Three.js and TypeScript. This ancient board game, dating back to 2600 BCE, is brought to life with modern web technologies and beautiful 3D graphics.
 
+## 🌐 Live Demo
+
+🎮 **[Play The Royal Game of Ur Online](https://zuramm.github.io/royal_game_of_ur_ts/)**
+
 ## 🎮 About The Royal Game of Ur
 
 The Royal Game of Ur is one of the oldest known board games, discovered in the ancient city of Ur (modern-day Iraq). It was played by the Sumerians and later by the Babylonians. The game involves strategy, luck, and tactical thinking as players race their pieces around a distinctive board with special squares.
