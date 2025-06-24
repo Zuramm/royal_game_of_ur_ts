@@ -9,6 +9,7 @@ BUILD_DIR=$(mktemp -d)
 echo "📦 Building project into $BUILD_DIR..."
 npm run build
 cp -r dist/* "$BUILD_DIR/"
+cp .gitignore "$BUILD_DIR/.gitignore"
 
 # Switch to gh-pages branch
 echo "🔄 Switching to gh-pages branch..."
