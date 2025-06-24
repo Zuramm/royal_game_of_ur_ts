@@ -1,6 +1,0 @@
-html, body {
-    margin: 0;
-    overflow: hidden;
-    overflow-y: hidden; /* Hide vertical scrollbar */
-    overflow-x: hidden; /* Hide horizontal scrollbar */
-}
