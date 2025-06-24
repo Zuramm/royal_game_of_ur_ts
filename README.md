@@ -2,10 +2,6 @@
 
 A 3D implementation of The Royal Game of Ur using Three.js and TypeScript. This ancient board game, dating back to 2600 BCE, is brought to life with modern web technologies and beautiful 3D graphics.
 
-![Game of Ur](https://img.shields.io/badge/Game-Ancient%20Board%20Game-blue)
-![Three.js](https://img.shields.io/badge/Three.js-3D%20Graphics-green)
-![TypeScript](https://img.shields.io/badge/TypeScript-Typed%20JavaScript-blue)
-
 ## 🎮 About The Royal Game of Ur
 
 The Royal Game of Ur is one of the oldest known board games, discovered in the ancient city of Ur (modern-day Iraq). It was played by the Sumerians and later by the Babylonians. The game involves strategy, luck, and tactical thinking as players race their pieces around a distinctive board with special squares.
@@ -116,6 +112,10 @@ game-of-ur/
 │   └── style.css            # Styling
 └── package.json             # Project configuration
 ```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 📚 Learn More
 
