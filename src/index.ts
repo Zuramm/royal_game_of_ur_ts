@@ -1,37 +1,27 @@
 // three.js
 import * as THREE from "three";
 
-import {
-    Move,
-    NewMove,
-    MoveMove,
-    KillMove,
-    SaveMove,
-    Field,
-    Game,
-    TeamColor,
-    Team,
-} from "./Game";
+import { Move, NewMove, MoveMove, KillMove, SaveMove, Field } from "./Game";
 import { GameRenderer } from "./GameRenderer";
 import { generateMovePath } from "./generateMovePath";
 
-let mouse: THREE.Vector2 = new THREE.Vector2();
+const mouse: THREE.Vector2 = new THREE.Vector2();
 let mouseOverMove: Move;
 
-let raycaster: THREE.Raycaster = new THREE.Raycaster();
+const raycaster: THREE.Raycaster = new THREE.Raycaster();
 
 // create the scene
-let scene: THREE.Scene = new THREE.Scene();
+const scene: THREE.Scene = new THREE.Scene();
 
 // create the camera
-let camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
-    75,
+const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
+    65,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
 );
 
-let renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({
+const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({
     antialias: true,
 });
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -46,7 +36,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // add lights
-let hemisphereLight: THREE.HemisphereLight = new THREE.HemisphereLight(
+const hemisphereLight: THREE.HemisphereLight = new THREE.HemisphereLight(
     0xfff3cc,
     0xff33e4,
     1
@@ -54,7 +44,7 @@ let hemisphereLight: THREE.HemisphereLight = new THREE.HemisphereLight(
 
 scene.add(hemisphereLight);
 
-let directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight(
+const directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight(
     0xffffff,
     1
 );
@@ -71,18 +61,18 @@ directionalLight.shadow.bias = -0.0001;
 scene.add(directionalLight);
 
 // add ground
-let groundPlaneGeometry: THREE.PlaneGeometry = new THREE.PlaneGeometry(
+const groundPlaneGeometry: THREE.PlaneGeometry = new THREE.PlaneGeometry(
     100,
     100
 );
-let groundPlaneMaterial: THREE.MeshStandardMaterial =
+const groundPlaneMaterial: THREE.MeshStandardMaterial =
     new THREE.MeshStandardMaterial({
         color: 0x161616,
         roughness: 1,
         metalness: 0.64,
     });
 
-let groundPlane: THREE.Mesh = new THREE.Mesh(
+const groundPlane: THREE.Mesh = new THREE.Mesh(
     groundPlaneGeometry,
     groundPlaneMaterial
 );
@@ -91,11 +81,11 @@ groundPlane.receiveShadow = true;
 
 scene.add(groundPlane);
 
-let game: GameRenderer = new GameRenderer(7);
+const game: GameRenderer = new GameRenderer(7);
 
 scene.add(game);
 
-let pathArrow: THREE.Group = new THREE.Group();
+const pathArrow: THREE.Group = new THREE.Group();
 pathArrow.position.set(-4.8, 0.65, 1.2);
 pathArrow.rotation.x = (Math.PI * 3) / 2;
 pathArrow.scale.set(1.2, 1.2, 1.2);
@@ -103,22 +93,54 @@ pathArrow.name = "PathArrow";
 
 scene.add(pathArrow);
 
-camera.position.set(0, 5, 2);
-
-camera.lookAt(scene.position);
-
-camera.position.x -= 0.6;
-camera.position.z += 0.8;
-
 function onWindowResize(): void {
+    const cameraDist = new THREE.Vector3(0, 5, 2.8).distanceTo(
+        new THREE.Vector3(0, 0, 0)
+    );
+
+    let minFov: number;
+    let mapWidth: number;
+
+    if (window.innerWidth > window.innerHeight) {
+        minFov = 65;
+        mapWidth = 7;
+
+        camera.position.set(-0.6, 5, 2.8);
+
+        camera.lookAt(new THREE.Vector3(-0.6, 0, 0.8));
+    } else {
+        minFov = 98;
+        mapWidth = 4.5;
+
+        camera.position.set(0.5, 5, 0);
+
+        camera.lookAt(new THREE.Vector3(-0.1, 0, 0));
+    }
+
+    const fov = Math.max(
+        minFov,
+        2 *
+            THREE.MathUtils.radToDeg(
+                Math.atan(
+                    ((mapWidth / window.innerWidth) * window.innerHeight) /
+                        cameraDist
+                )
+            )
+    );
+
+    console.log(fov);
+
     camera.aspect = window.innerWidth / window.innerHeight;
+    camera.fov = fov;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+onWindowResize();
+
 window.addEventListener("resize", onWindowResize, false);
 
-function hasMove(object: THREE.Object3D): Boolean {
+function hasMove(object: THREE.Object3D): boolean {
     return (
         object.userData.hasOwnProperty("move") &&
         object.userData.move instanceof Move
@@ -167,7 +189,7 @@ function onMouseMove(event: MouseEvent): void {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    var intersects: THREE.Intersection[] = raycaster.intersectObjects(
+    const intersects: THREE.Intersection[] = raycaster.intersectObjects(
         scene.children,
         true
     );

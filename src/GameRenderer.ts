@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 import * as Game from "./Game";
-import { Object3D } from "three";
 
 const models: { [key: string]: THREE.Group } = {
     Board: new THREE.Group(),
@@ -167,13 +166,13 @@ export class GameRenderer extends THREE.Object3D {
             self.add(self.board);
 
             for (let i: number = 0; i < startPieces; i++) {
-                let whitePiece: THREE.Group = models.WhitePiece.clone();
+                const whitePiece: THREE.Group = models.WhitePiece.clone();
                 whitePiece.position.copy(
                     PIECES_LEFT_OFFSET.clone().multiplyScalar(i)
                 );
                 self.whitePiecesLeft.add(whitePiece);
 
-                let blackPiece: THREE.Group = models.BlackPiece.clone();
+                const blackPiece: THREE.Group = models.BlackPiece.clone();
                 blackPiece.position.copy(
                     PIECES_LEFT_OFFSET.clone().multiplyScalar(i)
                 );

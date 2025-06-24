@@ -4,7 +4,6 @@ import {
     StrokeStyle,
 } from "three/examples/jsm/loaders/SVGLoader.js";
 import { Field, TeamColor } from "./Game";
-import { Vector3 } from "three";
 
 type Section = 0 | 1 | 2;
 
